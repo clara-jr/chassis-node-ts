@@ -1,5 +1,5 @@
 {
-  "name": "pentathlon-back",
+  "name": "chassis-node-ts",
   "version": "1.0.0",
   "description": "Node.js + Express.js + MongoDB API",
   "license": "ISC",
