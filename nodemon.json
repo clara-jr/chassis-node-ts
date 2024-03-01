@@ -1,0 +1,10 @@
+{
+  "ignore": [
+    ".git",
+    "node_modules",
+    "nodemon.json",
+    "package.json",
+    ".eslintrc.json",
+    ".mocharc.json"
+  ]
+}

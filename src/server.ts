@@ -1,0 +1,81 @@
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
+import dotenv from 'dotenv';
+import { Server } from 'node:http';
+
+import routes from './routes/routes.ts';
+import customErrorHandler from './middlewares/custom-error-handler.ts';
+
+const app = express();
+const PORT = process.env.PORT || 8080;
+
+let server: Server;
+
+async function start() {
+  dotenv.config({ path: `.env${process.env.NODE_ENV ? `.${process.env.NODE_ENV}` : ''}` });
+  console.info(`NODE_ENV: ${process.env.NODE_ENV}`);
+
+  // Init app services (e.g. MongoDB connection)
+  const mongodb_uri: string = process.env.MONGODB_URI || 'mongodb://localhost/pentathlon';
+  await mongoose.connect(mongodb_uri);
+  console.info(`✅ MongoDB is connected to ${mongodb_uri}`);
+
+  // Add middlewares (including routes)
+  app.use(helmet()); // set HTTP response headers
+  app.use(express.json()); // for parsing application/json
+  app.use(cors()); // enable CORS
+  app.use(cookieParser()); // set req.cookies
+  app.use('/', routes);
+  app.use(customErrorHandler);
+
+  // Start Express server
+  await new Promise((resolve) => {
+    server = app.listen(PORT, () => {
+      console.info(`✅ Express server listening at port: ${PORT}`);
+      resolve(true);
+    });
+  });
+}
+
+async function stop() {
+  // Stop Express server
+  await new Promise((resolve) => {
+    if (server) {
+      server.close(() => {
+        console.info('Express server stopped');
+        resolve(true);
+      });
+    } else {
+      resolve(true);
+    }
+  });
+
+  // Stop app services (e.g. MongoDB connection)
+  await mongoose.disconnect();
+  console.info('MongoDB disconnected.');
+
+  console.info('Exiting...');
+}
+
+// Docker stop
+process.on('SIGTERM', async () => {
+  await stop();
+  process.exit(0);
+});
+
+// Cctrl-C
+process.on('SIGINT', async () => {
+  await stop();
+  process.exit(0);
+});
+
+// Nodemon restart
+process.on('SIGUSR2', async () => {
+  await stop();
+  process.exit(0);
+});
+
+export default { app, start, stop };

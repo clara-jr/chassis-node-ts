@@ -1,0 +1,17 @@
+{
+  "recursive": true,
+  "ui": "bdd",
+  "reporter": "spec",
+  "globals": "projection",
+  "timeout": 6000,
+  "growl": true,
+  "exit": true,
+  "import": "tsx",
+  "extensions": [
+    "ts",
+    "tsx"
+  ],
+  "spec": [
+    "test/**/*.spec.ts"
+  ]
+}
