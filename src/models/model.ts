@@ -14,7 +14,7 @@ const ModelSchema = new Schema({
     string: String,
     number: Number
   },
-  object: { tupe: Object },
+  object: { type: Object },
   default: { type: String, default: 'default' },
   lang: {
     type: String,
