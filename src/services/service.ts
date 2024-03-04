@@ -1,4 +1,4 @@
-import { Model } from '../models/model.js';
+import { Model } from '../models/model.ts';
 
 async function getAll() {
   return Model.find();
