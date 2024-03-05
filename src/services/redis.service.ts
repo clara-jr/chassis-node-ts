@@ -38,8 +38,8 @@ async function del(key: string) {
 }
 
 
-async function set(key: string, value: object) {
-  return await redis.setex(key, TTL, JSON.stringify(value));
+async function setex(key: string, value: object | string, ttl: number = TTL) {
+  return await redis.setex(key, ttl, JSON.stringify(value));
 }
 
 function disconnect() {
@@ -49,7 +49,7 @@ function disconnect() {
 export default {
   bootstrap,
   get,
-  set,
+  setex,
   del,
   disconnect
 };

@@ -22,7 +22,7 @@ export default async function (req: Request, res: Response, next: NextFunction) 
   res.send = (body) => {
     try {
       const data = JSON.parse(body);
-      RedisService.set(key, data);
+      RedisService.setex(key, data);
     } catch (error) {
       console.info('⚠️ Error parsing data');
       console.error(error);
