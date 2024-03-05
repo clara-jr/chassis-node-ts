@@ -1,11 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 
 import RedisService from '../services/redis.service.ts';
+interface CustomRequest extends Request {
+  jwtUser: { userName: string };
+}
 
-export default async function (req: Request, res: Response, next: NextFunction) {
+export default async function (req: CustomRequest, res: Response, next: NextFunction) {
   if (req.method !== 'GET') return next();
-  
-  const key = req.originalUrl;
+
+  const key = `chassis-node-js-${req.jwtUser.userName}-${req.originalUrl}`;
 
   try {
     const cachedData = await RedisService.get(key);

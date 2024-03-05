@@ -8,8 +8,10 @@ import { Server } from 'node:http';
 
 import routes from './routes/routes.ts';
 import customErrorHandler from './middlewares/custom-error-handler.ts';
+import authenticationHandler from './middlewares/authentication-handler.ts';
 import cacheHandler from './middlewares/cache-handler.ts';
 import RedisService from './services/redis.service.ts';
+import JWTService from './services/jwt.service.ts';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -27,12 +29,14 @@ async function start() {
   const redis_uri: string = process.env.REDIS_URI || 'redis://localhost:6379';
   await RedisService.bootstrap(redis_uri);
   console.info(`✅ Redis is connected to ${redis_uri}`);
+  JWTService.bootstrap();
 
   // Add middlewares (including routes)
   app.use(helmet()); // set HTTP response headers
   app.use(express.json()); // for parsing application/json
   app.use(cors()); // enable CORS
   app.use(cookieParser()); // set req.cookies
+  app.use(authenticationHandler);
   app.use(cacheHandler);
   app.use('/', routes);
   app.use(customErrorHandler);
@@ -62,6 +66,8 @@ async function stop() {
   // Stop app services (e.g. MongoDB connection)
   await mongoose.disconnect();
   console.info('MongoDB disconnected.');
+  RedisService.disconnect();
+  console.info('Redis disconnected.');
 
   console.info('Exiting...');
 }
