@@ -14,7 +14,7 @@ describe('Test', () => {
     await Model.deleteMany({});
   });
   describe('GET /', () => {
-    const model = { index: new ObjectId() };
+    const model = { index: new ObjectId('123456789123456789123456') };
     beforeEach(async () => {
       await Model.create(model);
     });
