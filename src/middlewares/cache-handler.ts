@@ -13,8 +13,7 @@ export default async function (req: CustomRequest, res: Response, next: NextFunc
   try {
     const cachedData = await RedisService.get(key);
     if (cachedData) {
-      const data = JSON.parse(cachedData);
-      return res.status(data.status || 200).json(data);
+      return res.status(200).json(JSON.parse(cachedData));
     }
   } catch (error) {
     console.info('⚠️ Error getting data from cache');
@@ -25,7 +24,7 @@ export default async function (req: CustomRequest, res: Response, next: NextFunc
   res.send = (body) => {
     try {
       const data = JSON.parse(body);
-      RedisService.setex(key, data);
+      if (!data.errorCode) RedisService.setex(key, data);
     } catch (error) {
       console.info('⚠️ Error parsing data');
       console.error(error);
