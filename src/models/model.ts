@@ -40,6 +40,6 @@ interface ModelType extends _ModelType {
   _id: Schema.Types.ObjectId
 }
 
-const Model = model<_ModelType>('Model', ModelSchema);
+const Model = model<_ModelType>('Model', ModelSchema, 'models');
 
 export { Model, ModelType };
