@@ -26,7 +26,7 @@ App is launched listening on ***8080*** port by default, set the environment var
 This folder contains the app source code:
 
 - `server.js`: functions to start (and stop) app environment: load environment variables, bootstrap app services, set middlewares and when done, init express
-- `middlewares`: middlewares to be added to express (i.e. async error handler and custom error handler)
+- `middlewares`: middlewares to be added to express (i.e. cache, authentication, async error and custom error handlers)
 - `routes`: routes definition
 - `controllers`: mvc controllers
 - `services`: application services
@@ -41,6 +41,9 @@ This folder contains the tests (and the `_setup.js` file to start app environmen
 This project depends on some environment variables (from `.env.[environment]` files):
 
 - `MONGODB_URI`: MongoDB connection URI used to connect to a MongoDB database server.
+- `REDIS_URI`: Redis connection URI used to store cached data returned by the API endpoints.
+- `JWT_SECRET`: The secret to [sign and verify JWTs](https://www.npmjs.com/package/jsonwebtoken).
+- `UUID_NAMESPACE`: Namespace for auto-generating UUIDs to use as [JWT](https://en.wikipedia.org/wiki/JSON_Web_Token)'s JTI.
 
 ## How was this chassis created?
 
@@ -56,7 +59,7 @@ This project depends on some environment variables (from `.env.[environment]` fi
     ```
 
     Also add `"type": "module"` in order to use `import` instead of `require`.
-2. Install express and mongoose: `npm install express mongoose`.
+2. Install express and mongoose: `npm install express mongoose`. Install also ioredis for caching purposes, and jsonwebtoken and uuid to create an authentication middleware for securing endpoints: `npm install ioredis jsonwebtoken uuid`.
 3. Install dev dependencies such as testing ones (supertext, c8, mocha, chai), linter (eslint, eslint-plugin-json-format) and nodemon:
     - `npm install --save-dev supertest c8 mocha chai`
     - `npm install --save-dev eslint eslint-plugin-json-format`
@@ -129,7 +132,7 @@ This project depends on some environment variables (from `.env.[environment]` fi
 
 ### Development steps
 
-1. Create `index.js` and `src/server.js`.
+1. Create `index.js`, `src/server.js` and the necessary middlewares for authentication, caching and error handling.
 2. Add routes folder and `routes.js`. Add routing middleware in `server.js`: `app.use("/", routes);`.
 3. Add controllers folder and `controller.js`.
 4. Add services folder and `service.js` file.
