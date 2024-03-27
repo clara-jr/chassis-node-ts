@@ -9,6 +9,7 @@ import { Server } from 'node:http';
 import routes from './routes/routes.ts';
 import customErrorHandler from './middlewares/custom-error-handler.ts';
 import authenticationHandler from './middlewares/authentication-handler.ts';
+import setOpenAPIDocumentation from './middlewares/openapi-docs-handler.js';
 import cacheHandler from './middlewares/cache-handler.ts';
 import RedisService from './services/redis.service.ts';
 import JWTService from './services/jwt.service.ts';
@@ -19,11 +20,14 @@ const PORT = process.env.PORT || 8080;
 let server: Server;
 
 async function start() {
-  dotenv.config({ path: `.env${process.env.NODE_ENV ? `.${process.env.NODE_ENV}` : ''}` });
+  dotenv.config({
+    path: `.env${process.env.NODE_ENV ? `.${process.env.NODE_ENV}` : ''}`,
+  });
   console.info(`NODE_ENV: ${process.env.NODE_ENV}`);
 
   // Init app services (e.g. MongoDB connection)
-  const mongodb_uri: string = process.env.MONGODB_URI || 'mongodb://localhost/pentathlon';
+  const mongodb_uri: string =
+    process.env.MONGODB_URI || 'mongodb://localhost/pentathlon';
   await mongoose.connect(mongodb_uri);
   console.info(`✅ MongoDB is connected to ${mongodb_uri}`);
   const redis_uri: string = process.env.REDIS_URI || 'redis://localhost:6379';
@@ -36,6 +40,7 @@ async function start() {
   app.use(express.json()); // for parsing application/json
   app.use(cors()); // enable CORS
   app.use(cookieParser()); // set req.cookies
+  setOpenAPIDocumentation(app); // set openapi documentation
   app.use(authenticationHandler);
   app.use(cacheHandler);
   app.use('/', routes);

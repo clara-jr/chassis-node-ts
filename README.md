@@ -134,7 +134,7 @@ This project depends on some environment variables (from `.env.[environment]` fi
 ### Development steps
 
 1. Create `index.js`, `src/server.js` and the necessary middlewares for authentication, caching and error handling.
-2. Add routes folder and `routes.js`. Add routing middleware in `server.js`: `app.use("/", routes);`.
+2. Add routes folder and `routes.js`. Add routing middleware in `server.js`: `app.use("/", routes);`. Document routes with [OpenAPI Specification](https://spec.openapis.org/oas/latest.html).
 3. Add controllers folder and `controller.js`.
 4. Add services folder and `service.js` file.
 5. Add mongoose models in folder models.
