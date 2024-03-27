@@ -12,6 +12,6 @@
     "tsx"
   ],
   "spec": [
-    "test/**/*.spec.ts"
+    "test/**/*.ts"
   ]
 }
