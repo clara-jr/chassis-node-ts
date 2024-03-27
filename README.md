@@ -31,6 +31,7 @@ This folder contains the app source code:
 - `controllers`: mvc controllers
 - `services`: application services
 - `models`: app models (i.e. mongoose models)
+- `dtos`: schemas to validate data received with joi
 
 ### test/
 

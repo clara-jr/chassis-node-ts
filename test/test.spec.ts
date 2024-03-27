@@ -40,11 +40,41 @@ describe('Test', () => {
         await Model.create(model);
       });
       it('should respond with 200 OK', async () => {
-        const res = await supertest(server.app).get('/').set('X-Auth-Token', `${token}`);
+        const res = await supertest(server.app)
+          .get('/')
+          .set('X-Auth-Token', `${token}`);
         expect(res.status).to.equal(200);
         expect(res.body).to.have.length(1);
         expect(res.body[0].index.toString()).to.equal(model.index.toString());
         expect(res.body[0].default).to.equal('default');
+      });
+    });
+  });
+
+  describe('POST /', () => {
+    describe('when data is invalid', () => {
+      it('should respond with 400 VALIDATION_ERROR', async () => {
+        const res = await supertest(server.app)
+          .post('/')
+          .set('X-Auth-Token', `${token}`)
+          .send({ index: 1 });
+        expect(res.status).to.equal(400);
+        expect(res.error).to.exist;
+        expect(res.body.errorCode).to.equal('VALIDATION_ERROR');
+      });
+    });
+    describe('when data is valid', () => {
+      const model = { index: new ObjectId('123456789123456789123456') };
+      it('should respond with 201 CREATED', async () => {
+        const res = await supertest(server.app)
+          .post('/')
+          .set('X-Auth-Token', `${token}`)
+          .send(model);
+        expect(res.status).to.equal(201);
+        expect(res.body.index.toString()).to.equal(model.index.toString());
+
+        const object = await Model.findOne({ index: model.index });
+        expect(object?.index.toString()).to.equal(model.index.toString());
       });
     });
   });
