@@ -9,7 +9,8 @@ import { Server } from 'node:http';
 import routes from './routes/routes.ts';
 import customErrorHandler from './middlewares/custom-error-handler.ts';
 import authenticationHandler from './middlewares/authentication-handler.ts';
-import setOpenAPIDocumentation from './middlewares/openapi-docs-handler.js';
+import setOpenAPIDocumentation from './middlewares/openapi-docs-handler.ts';
+import setMorganLogger from './middlewares/morgan-logger-handler.ts';
 import cacheHandler from './middlewares/cache-handler.ts';
 import RedisService from './services/redis.service.ts';
 import JWTService from './services/jwt.service.ts';
@@ -40,6 +41,7 @@ async function start() {
   app.use(express.json()); // for parsing application/json
   app.use(cors()); // enable CORS
   app.use(cookieParser()); // set req.cookies
+  setMorganLogger(app); // set morgan logger
   setOpenAPIDocumentation(app); // set openapi documentation
   app.use(authenticationHandler);
   app.use(cacheHandler);
