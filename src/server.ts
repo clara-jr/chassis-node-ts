@@ -28,7 +28,7 @@ async function start() {
 
   // Init app services (e.g. MongoDB connection)
   const mongodb_uri: string =
-    process.env.MONGODB_URI || 'mongodb://localhost/pentathlon';
+    process.env.MONGODB_URI || 'mongodb://localhost/chassis';
   await mongoose.connect(mongodb_uri);
   console.info(`✅ MongoDB is connected to ${mongodb_uri}`);
   const redis_uri: string = process.env.REDIS_URI || 'redis://localhost:6379';
