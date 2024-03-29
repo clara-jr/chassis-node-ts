@@ -1,6 +1,6 @@
-# Server Chassis: TypeScript + Node.js + Express.js + MongoDB + Mocha
+# Server Chassis: TypeScript + Node.js + Express.js + MongoDB + Redis + Mocha
 
-Chassis for a REST API using TypeScript, Node.js, Express.js and MongoDB. Tests are run using Mocha.
+Chassis for a REST API using TypeScript, Node.js, Express.js, MongoDB and Redis. Tests are run using Mocha.
 
 ## Requirements
 
@@ -61,7 +61,7 @@ This project depends on some environment variables (from `.env.[environment]` fi
 
     Also add `"type": "module"` in order to use `import` instead of `require`.
 2. Install express and mongoose: `npm install express mongoose`. Install also ioredis for caching purposes, and jsonwebtoken and uuid to create an authentication middleware for securing endpoints: `npm install ioredis jsonwebtoken uuid`.
-3. Install dev dependencies such as testing ones (supertext, c8, mocha, chai), linter (eslint, eslint-plugin-json-format) and nodemon:
+3. Install dev dependencies such as testing ones (supertest, c8, mocha, chai), linter (eslint, eslint-plugin-json-format) and nodemon:
     - `npm install --save-dev supertest c8 mocha chai`
     - `npm install --save-dev eslint eslint-plugin-json-format`
     - `npm install --save-dev nodemon`
