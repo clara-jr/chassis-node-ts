@@ -85,7 +85,7 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
-// Cctrl-C
+// Ctrl-C
 process.on('SIGINT', async () => {
   await stop();
   process.exit(0);
