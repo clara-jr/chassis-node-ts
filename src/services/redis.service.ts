@@ -30,16 +30,16 @@ function _sleep(ms: number) {
 }
 
 async function get(key: string) {
-  return await redis.get(key);
+  return redis.get(key);
 }
 
 async function del(key: string) {
-  return await redis.del(key);
+  return redis.del(key);
 }
 
 
 async function setex(key: string, value: object | string, ttl: number = TTL) {
-  return await redis.setex(key, ttl, JSON.stringify(value));
+  return redis.setex(key, ttl, JSON.stringify(value));
 }
 
 function disconnect() {
