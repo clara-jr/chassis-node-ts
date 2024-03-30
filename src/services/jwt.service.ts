@@ -34,7 +34,7 @@ async function verifyToken(jwToken: string | undefined) {
     throw new ApiError(401, 'UNAUTHORIZED', 'No session found.');
   }
   // Extend redis key expiration
-  await RedisService.setex(`chassis-session:${jti}`, sessionData, sessionTTL);
+  await RedisService.setex(`chassis-session:${jti}`, JSON.parse(sessionData), sessionTTL);
   return JSON.parse(sessionData);
 }
 
