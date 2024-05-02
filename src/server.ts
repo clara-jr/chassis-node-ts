@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
-import dotenv from 'dotenv';
 import { Server } from 'node:http';
 
 import routes from './routes/routes.ts';
@@ -21,9 +20,7 @@ const PORT = process.env.PORT || 8080;
 let server: Server;
 
 async function start() {
-  dotenv.config({
-    path: `.env${process.env.NODE_ENV ? `.${process.env.NODE_ENV}` : ''}`,
-  });
+  process.loadEnvFile(`.env${process.env.NODE_ENV ? `.${process.env.NODE_ENV}` : ''}`);
   console.info(`NODE_ENV: ${process.env.NODE_ENV}`);
 
   // Init app services (e.g. MongoDB connection)
