@@ -4,8 +4,8 @@ Chassis for a REST API using TypeScript, Node.js, Express.js, MongoDB and Redis.
 
 ## Requirements
 
-- `node` v20.11.0
-- `npm` v10.2.4
+- `node` v22.1.0
+- `npm` v10.7.0
 - MongoDB running locally
 
 ## Basic Usage
@@ -54,8 +54,8 @@ This project depends on some environment variables (from `.env.[environment]` fi
 
     ```json
     "engines": {
-      "node": ">=20.11.0",
-      "npm": ">=10.2.4"
+      "node": ">=22.1.0",
+      "npm": ">=10.7.0"
     }
     ```
 
