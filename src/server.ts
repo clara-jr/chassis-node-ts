@@ -4,6 +4,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { Server } from 'node:http';
+import { styleText } from 'node:util';
 
 import routes from './routes/routes.ts';
 import customErrorHandler from './middlewares/custom-error-handler.ts';
@@ -21,16 +22,19 @@ let server: Server;
 
 async function start() {
   process.loadEnvFile(`.env${process.env.NODE_ENV ? `.${process.env.NODE_ENV}` : ''}`);
-  console.info(`NODE_ENV: ${process.env.NODE_ENV}`);
+  // @ts-expect-error: ignore ts error in the following line
+  console.info(styleText('bold', `NODE_ENV: ${styleText(['bgGreenBright', 'bold'], process.env.NODE_ENV)}`));
 
   // Init app services (e.g. MongoDB connection)
   const mongodb_uri: string =
     process.env.MONGODB_URI || 'mongodb://localhost/chassis';
   await mongoose.connect(mongodb_uri);
-  console.info(`✅ MongoDB is connected to ${mongodb_uri}`);
+  // @ts-expect-error: ignore ts error in the following line
+  console.info(`✅ MongoDB is connected to ${styleText(['bgGreenBright', 'bold'], mongodb_uri)}`);
   const redis_uri: string = process.env.REDIS_URI || 'redis://localhost:6379';
   await RedisService.bootstrap(redis_uri);
-  console.info(`✅ Redis is connected to ${redis_uri}`);
+  // @ts-expect-error: ignore ts error in the following line
+  console.info(`✅ Redis is connected to ${styleText(['bgGreenBright', 'bold'], redis_uri)}`);
   JWTService.bootstrap();
 
   // Add middlewares (including routes)
@@ -48,7 +52,8 @@ async function start() {
   // Start Express server
   await new Promise((resolve) => {
     server = app.listen(PORT, () => {
-      console.info(`✅ Express server listening at port: ${PORT}`);
+      // @ts-expect-error: ignore ts error in the following line
+      console.info(`✅ Express server listening at port: ${styleText(['bgGreenBright', 'bold'], `${PORT}`)}`);
       resolve(true);
     });
   });
@@ -59,7 +64,7 @@ async function stop() {
   await new Promise((resolve) => {
     if (server) {
       server.close(() => {
-        console.info('Express server stopped');
+        console.info(styleText('dim', 'Express server stopped'));
         resolve(true);
       });
     } else {
@@ -69,11 +74,11 @@ async function stop() {
 
   // Stop app services (e.g. MongoDB connection)
   await mongoose.disconnect();
-  console.info('MongoDB disconnected.');
+  console.info(styleText('dim', 'MongoDB disconnected'));
   RedisService.disconnect();
-  console.info('Redis disconnected.');
+  console.info(styleText('dim', 'Redis disconnected'));
 
-  console.info('Exiting...');
+  console.info(styleText('dim', 'Exiting...'));
 }
 
 // Docker stop
