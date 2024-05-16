@@ -6,6 +6,7 @@
   "lines": 80,
   "exclude": [
     "index.ts",
+    "eslint.config.js",
     "coverage",
     "test"
   ]

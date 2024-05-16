@@ -66,25 +66,40 @@ This project depends on some environment variables (from `.env.[environment]` fi
     - `npm install --save-dev eslint eslint-plugin-json-format`
     - `npm install --save-dev nodemon`
 4. Configure eslint: `npx eslint --init`.
-5. Check the eslint configuration, `.eslintrc.json` file should have:
+5. Check the eslint configuration, `eslint.config.js` file should have:
 
-    ```json
-    "env": {
-      "node": true,
-      "es2021": true,
-      "mocha": true
-    }
+    ```js
+    import globals from 'globals';
+
+    export default [
+      {
+        languageOptions: {
+          globals: { ...globals.node, ...globals.mocha, ...globals.es2021 },
+        }
+      }
+    ]
     ```
 
     Also add `json-format` plugin (the one installed with the dependency `eslint-plugin-json-format`)
 
-    ```json
-    "plugins": [
-      "json-format"
+    ```js
+    import jsonformat from 'eslint-plugin-json-format';
+
+    export default [
+      { 
+        ...
+        plugins: {
+          'json-format': jsonformat
+        }
+      }
     ]
     ```
 
-    Add `.eslintignore` file.
+    Add ignored files in `eslint.config.js` ([`.eslintignore` file is no more needed using flat config file format](https://eslint.org/docs/latest/use/configure/ignore)):
+
+    ```js
+    ignores: ['package-lock.json', 'coverage/', 'node_modules/', 'build/', 'tsconfig.json', '*.md']
+    ```
 
 6. Create Mocha configuration file `.mocharc.json`. With `exit: true` the server is stopped after executing tests (without the need to click Ctrl+C).
 7. Create test coverage configuration file `.c8rc.json`. The params set will be needed for the tests to pass successfully.
