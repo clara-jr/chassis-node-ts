@@ -41,7 +41,7 @@ This folder contains the tests (and the `_setup.js` file to start app environmen
 
 This project depends on some environment variables (from `.env.[environment]` files):
 
-- `MONGODB_URI`: MongoDB connection URI used to connect to a MongoDB database server.
+- `MONGODB_URI`: MongoDB connection URI used to connect to a MongoDB database server. This environment variable is not needed in test environment (in `env.test` file) because in this environment an in-memory MongoDB instance (using `mongodb-memory-server`) is started in order to use it during testing and automatically shut down when testing is complete.
 - `REDIS_URI`: Redis connection URI used to store cached data returned by the API endpoints.
 - `JWT_SECRET`: The secret to [sign and verify JWTs](https://www.npmjs.com/package/jsonwebtoken).
 - `UUID_NAMESPACE`: Namespace for auto-generating UUIDs to use as [JWT](https://en.wikipedia.org/wiki/JSON_Web_Token)'s JTI.
