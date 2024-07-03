@@ -16,7 +16,6 @@ import RedisService from './services/redis.service.ts';
 import JWTService from './services/jwt.service.ts';
 
 const app = express();
-const PORT = process.env.PORT || 8080;
 
 let server: Server;
 
@@ -51,6 +50,7 @@ async function start() {
 
   // Start Express server
   await new Promise((resolve) => {
+    const PORT = process.env.PORT || 8080;
     server = app.listen(PORT, () => {
       // @ts-expect-error: ignore ts error in the following line
       console.info(`✅ Express server listening at port: ${styleText(['bgGreenBright', 'bold'], `${PORT}`)}`);
