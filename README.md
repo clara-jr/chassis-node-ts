@@ -41,7 +41,7 @@ This folder contains the tests (and the `_setup.js` file to start app environmen
 
 This project depends on some environment variables (from `.env.[environment]` files):
 
-- `MONGODB_URI`: MongoDB connection URI used to connect to a MongoDB database server.
+- `MONGODB_URI`: MongoDB connection URI used to connect to a MongoDB database server. This environment variable is not needed in test environment (in `env.test` file) because in this environment an in-memory MongoDB instance (using `mongodb-memory-server`) is started in order to use it during testing and automatically shut down when testing is complete.
 - `REDIS_URI`: Redis connection URI used to store cached data returned by the API endpoints.
 - `JWT_SECRET`: The secret to [sign and verify JWTs](https://www.npmjs.com/package/jsonwebtoken).
 - `UUID_NAMESPACE`: Namespace for auto-generating UUIDs to use as [JWT](https://en.wikipedia.org/wiki/JSON_Web_Token)'s JTI.
@@ -59,7 +59,7 @@ This project depends on some environment variables (from `.env.[environment]` fi
     }
     ```
 
-    Also add `"type": "module"` in order to use `import` instead of `require`.
+    Also add `"type": "module"` in order to use `import` ([ECMAScript modules](https://nodejs.org/api/esm.html)) instead of `require` ([CommonJS modules](https://nodejs.org/api/modules.html)).
 2. Install express and mongoose: `npm install express mongoose`. Install also ioredis for caching purposes, and jsonwebtoken and uuid to create an authentication middleware for securing endpoints: `npm install ioredis jsonwebtoken uuid`.
 3. Install dev dependencies such as testing ones (supertest, c8, mocha, chai), linter (eslint, eslint-plugin-json-format) and nodemon:
     - `npm install --save-dev supertest c8 mocha chai`
