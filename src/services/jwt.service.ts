@@ -3,23 +3,38 @@ import { v4 as uuidv4, v5 as uuidv5 } from 'uuid';
 import { ApiError } from '../middlewares/custom-error-handler.ts';
 import RedisService from './redis.service.ts';
 
+interface Session {
+  jti: string
+  sessionData: {
+    userName: string
+  }
+}
+
+export interface Tokens {
+  accessToken: string;
+  refreshToken?: string;
+}
+
 let sessionTTL: number;
+let accessTokenTTL: number;
+let refreshTokenTTL: number;
 let jwtOptions: object;
 let jwtSecret: string;
 let uuidNamespace: string;
 
 function bootstrap() {
-  sessionTTL = 60 * 60; // session expires in 1 h
+  accessTokenTTL = parseInt(process.env.ACCESSTOKEN_TTL ?? '3600'); // access token expires in 1 hour
+  refreshTokenTTL = parseInt(process.env.REFRESHTOKEN_TTL ?? '86400'); // refresh token expires in 1 day
+  sessionTTL = refreshTokenTTL; // redis session expires in 1 day (it should be the same expiration as refresh token)
   jwtOptions = {
-    // To eliminate the need for a refresh token, we do not set a token expiration (expiresIn). Instead, we verify the existence of a Redis session.
-    audience: 'chassis-node-js',
-    issuer: 'chassis-node-js',
+    audience: process.env.JWT_AUDIENCE,
+    issuer: process.env.JWT_ISSUER,
   };
   jwtSecret = process.env.JWT_SECRET || '';
   uuidNamespace = process.env.UUID_NAMESPACE || '';
 }
 
-async function verifyToken(jwToken: string | undefined) {
+async function verifyToken(jwToken: string | undefined): Promise<Session> {
   if (!jwToken) {
     throw new ApiError(401, 'UNAUTHORIZED', 'No token found.');
   }
@@ -33,22 +48,28 @@ async function verifyToken(jwToken: string | undefined) {
   if (!sessionData) {
     throw new ApiError(401, 'UNAUTHORIZED', 'No session found.');
   }
-  // Extend redis key expiration
-  await RedisService.setex(`chassis-session:${jti}`, JSON.parse(sessionData), sessionTTL);
-  return JSON.parse(sessionData);
+  return { jti, sessionData: JSON.parse(sessionData) };
 }
 
-async function createToken(sessionData: object) {
-  const jti = uuidv5(uuidv4(), uuidNamespace);
+async function createToken(sessionData: object, jti?: string, shouldExtendRefreshToken: boolean = true): Promise<Tokens> {
+  jti = jti ?? uuidv5(uuidv4(), uuidNamespace);
   const tokenData = {
     jti,
   };
-  const token = jwt.sign(tokenData, jwtSecret, jwtOptions);
-  await RedisService.setex(`chassis-session:${jti}`, sessionData, sessionTTL);
-  return token;
+  const accessToken = jwt.sign(tokenData, jwtSecret, { ...jwtOptions, expiresIn: accessTokenTTL }); // Access token expires in 1h
+  if (!shouldExtendRefreshToken) return { accessToken };
+  const refreshToken = jwt.sign(tokenData, jwtSecret, { ...jwtOptions, expiresIn: refreshTokenTTL }); // Refresh token expires in 1d
+  await RedisService.setex(`chassis-session:${jti}`, sessionData, sessionTTL); // Extend redis key expiration
+  return { accessToken, refreshToken };
 }
 
-async function clearSessionData(jwToken: string) {
+async function extendToken(refreshToken: string): Promise<Tokens> {
+  const { jti, sessionData } = await verifyToken(refreshToken);
+  // Extend accessToken (and optionally refreshToken to work with larger sessions)
+  return createToken(sessionData, jti);
+}
+
+async function clearSessionData(jwToken: string): Promise<void> {
   try {
     const { jti } = jwt.verify(jwToken, jwtSecret, jwtOptions) as { jti: string };
     await RedisService.del(`chassis-session:${jti}`);
@@ -60,6 +81,7 @@ async function clearSessionData(jwToken: string) {
 export default {
   bootstrap,
   createToken,
+  extendToken,
   verifyToken,
   clearSessionData
 };

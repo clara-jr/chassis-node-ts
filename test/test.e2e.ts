@@ -11,14 +11,14 @@ import JWTService from '../src/services/jwt.service.ts';
 // Find tsx related issue here: https://github.com/privatenumber/tsx/issues/433
 
 describe('Test', () => {
-  let token;
+  let accessToken;
 
   before(async () => {
-    token = await JWTService.createToken({ userName: 'test' });
+    ({ accessToken } = await JWTService.createToken({ userName: 'test' }));
   });
 
   after(async () => {
-    await JWTService.clearSessionData(token);
+    await JWTService.clearSessionData(accessToken);
   });
 
   afterEach(async () => {
@@ -42,7 +42,7 @@ describe('Test', () => {
       it('should respond with 200 OK', async () => {
         const res = await supertest(server.app)
           .get('/')
-          .set('X-Auth-Token', `${token}`);
+          .set('Cookie', [`accessToken=${accessToken}`]);
         expect(res.status).to.equal(200);
         expect(res.body).to.have.length(1);
         expect(res.body[0].index.toString()).to.equal(model.index.toString());
@@ -56,7 +56,7 @@ describe('Test', () => {
       it('should respond with 400 VALIDATION_ERROR', async () => {
         const res = await supertest(server.app)
           .post('/')
-          .set('X-Auth-Token', `${token}`)
+          .set('Cookie', [`accessToken=${accessToken}`])
           .send({ index: 1 });
         expect(res.status).to.equal(400);
         expect(res.error).to.exist;
@@ -68,7 +68,7 @@ describe('Test', () => {
       it('should respond with 201 CREATED', async () => {
         const res = await supertest(server.app)
           .post('/')
-          .set('X-Auth-Token', `${token}`)
+          .set('Cookie', [`accessToken=${accessToken}`])
           .send(model);
         expect(res.status).to.equal(201);
         expect(res.body.index.toString()).to.equal(model.index.toString());
