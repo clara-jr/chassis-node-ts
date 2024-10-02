@@ -7,9 +7,6 @@ import server from '../src/server.ts';
 import { Model } from '../src/models/model.ts';
 import JWTService from '../src/services/jwt.service.ts';
 
-// Coverage with c8 and tsx is not working, it always reports as 100%.
-// Find tsx related issue here: https://github.com/privatenumber/tsx/issues/433
-
 describe('Test', () => {
   let token;
 
