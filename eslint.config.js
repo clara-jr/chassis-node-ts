@@ -4,7 +4,6 @@ import jsonformat from 'eslint-plugin-json-format';
 import tseslint from 'typescript-eslint';
 import tsparser from '@typescript-eslint/parser';
 
-
 export default [
   {
     // global ignores
