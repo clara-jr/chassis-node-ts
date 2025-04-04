@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
-import RedisService from '../services/redis.service.ts';
+import IMDBService from '../services/imdb.service.ts';
 interface CustomRequest extends Request {
   jwtUser: { userName: string };
 }
@@ -11,7 +11,7 @@ export default async function (req: CustomRequest, res: Response, next: NextFunc
   const key = `chassis-node-js-${req.jwtUser.userName}-${req.originalUrl}`;
 
   try {
-    const cachedData = await RedisService.get(key);
+    const cachedData = await IMDBService.get(key);
     if (cachedData) {
       return res.status(200).json(JSON.parse(cachedData));
     }
@@ -24,7 +24,7 @@ export default async function (req: CustomRequest, res: Response, next: NextFunc
   res.send = (body) => {
     try {
       const data = JSON.parse(body);
-      if (!data.errorCode) RedisService.setex(key, data);
+      if (!data.errorCode) IMDBService.setex(key, data);
     } catch (error) {
       console.info('⚠️ Error parsing data');
       console.error(error);

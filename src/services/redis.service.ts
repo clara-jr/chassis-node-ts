@@ -1,11 +1,10 @@
 import Redis from 'ioredis';
 let redis: Redis;
-const TTL = 60 * 60; // 1 h (60 * 60 s)
 
-async function bootstrap(redis_uri: string) {
+async function bootstrap({ uri }: { uri: string }) {
   let ready = false;
 
-  redis = new Redis(redis_uri);
+  redis = new Redis(uri);
 
   redis.on('ready', () => {
     ready = true;
@@ -34,12 +33,12 @@ async function get(key: string) {
 }
 
 async function del(key: string) {
-  return redis.del(key);
+  redis.del(key);
 }
 
 
-async function setex(key: string, value: object | string, ttl: number = TTL) {
-  return redis.setex(key, ttl, JSON.stringify(value));
+async function setex(key: string, value: string, ttl: number) {
+  redis.setex(key, ttl, value);
 }
 
 function disconnect() {

@@ -12,8 +12,9 @@ import authenticationHandler from './middlewares/authentication-handler.ts';
 import setOpenAPIDocumentation from './middlewares/openapi-docs-handler.ts';
 import setMorganLogger from './middlewares/morgan-logger-handler.ts';
 import cacheHandler from './middlewares/cache-handler.ts';
-import RedisService from './services/redis.service.ts';
+import IMDBService from './services/imdb.service.ts';
 import JWTService from './services/jwt.service.ts';
+import redisService from './services/redis.service.ts';
 
 const app = express();
 
@@ -31,7 +32,7 @@ async function start() {
   // @ts-expect-error: ignore ts error in the following line
   console.info(`✅ MongoDB is connected to ${styleText(['bgGreenBright', 'bold'], mongodb_uri)}`);
   const redis_uri: string = process.env.REDIS_URI || 'redis://localhost:6379';
-  await RedisService.bootstrap(redis_uri);
+  await IMDBService.bootstrap(redisService, { uri: redis_uri });
   // @ts-expect-error: ignore ts error in the following line
   console.info(`✅ Redis is connected to ${styleText(['bgGreenBright', 'bold'], redis_uri)}`);
   JWTService.bootstrap();
@@ -75,7 +76,7 @@ async function stop() {
   // Stop app services (e.g. MongoDB connection)
   await mongoose.disconnect();
   console.info(styleText('dim', 'MongoDB disconnected'));
-  RedisService.disconnect();
+  IMDBService.disconnect();
   console.info(styleText('dim', 'Redis disconnected'));
 
   console.info(styleText('dim', 'Exiting...'));

@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4, v5 as uuidv5 } from 'uuid';
 import { ApiError } from '../middlewares/custom-error-handler.ts';
-import RedisService from './redis.service.ts';
+import IMDBService from './imdb.service.ts';
 
 let sessionTTL: number;
 let jwtOptions: object;
@@ -29,12 +29,12 @@ async function verifyToken(jwToken: string | undefined) {
   } catch (error) {
     throw new ApiError(401, 'UNAUTHORIZED', (error as Error).message);
   }
-  const sessionData = await RedisService.get(`chassis-session:${jti}`);
+  const sessionData = await IMDBService.get(`chassis-session:${jti}`);
   if (!sessionData) {
     throw new ApiError(401, 'UNAUTHORIZED', 'No session found.');
   }
   // Extend redis key expiration
-  await RedisService.setex(`chassis-session:${jti}`, JSON.parse(sessionData), sessionTTL);
+  await IMDBService.setex(`chassis-session:${jti}`, JSON.parse(sessionData), sessionTTL);
   return JSON.parse(sessionData);
 }
 
@@ -44,14 +44,14 @@ async function createToken(sessionData: object) {
     jti,
   };
   const token = jwt.sign(tokenData, jwtSecret, jwtOptions);
-  await RedisService.setex(`chassis-session:${jti}`, sessionData, sessionTTL);
+  await IMDBService.setex(`chassis-session:${jti}`, sessionData, sessionTTL);
   return token;
 }
 
 async function clearSessionData(jwToken: string) {
   try {
     const { jti } = jwt.verify(jwToken, jwtSecret, jwtOptions) as { jti: string };
-    await RedisService.del(`chassis-session:${jti}`);
+    await IMDBService.del(`chassis-session:${jti}`);
   } catch (_) {
     // Session no longer exists
   }
