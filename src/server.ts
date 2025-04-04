@@ -29,11 +29,9 @@ async function start() {
   const mongodb_uri: string =
     process.env.MONGODB_URI || 'mongodb://localhost/chassis';
   await mongoose.connect(mongodb_uri);
-  // @ts-expect-error: ignore ts error in the following line
   console.info(`✅ MongoDB is connected to ${styleText(['bgGreenBright', 'bold'], mongodb_uri)}`);
   const redis_uri: string = process.env.REDIS_URI || 'redis://localhost:6379';
   await IMDBService.bootstrap(redisService, { uri: redis_uri });
-  // @ts-expect-error: ignore ts error in the following line
   console.info(`✅ Redis is connected to ${styleText(['bgGreenBright', 'bold'], redis_uri)}`);
   JWTService.bootstrap();
 
@@ -53,7 +51,6 @@ async function start() {
   await new Promise((resolve) => {
     const PORT = process.env.PORT || 8080;
     server = app.listen(PORT, () => {
-      // @ts-expect-error: ignore ts error in the following line
       console.info(`✅ Express server listening at port: ${styleText(['bgGreenBright', 'bold'], `${PORT}`)}`);
       resolve(true);
     });
