@@ -11,7 +11,7 @@ interface IMDBServiceType {
 
 async function bootstrap(service: IMDBServiceType, config: { uri: string }): Promise<void> {
   IMDBService = service;
-  IMDBService.bootstrap(config);
+  await IMDBService.bootstrap(config);
 }
 
 async function get(key: string): Promise<string | null> {
