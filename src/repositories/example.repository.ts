@@ -1,23 +1,30 @@
-import { ExampleModel, ExampleType } from '../models/example.model.ts';
+import { PopulateOptions } from 'mongoose';
+import { GenericRepository } from '../types/repository.types.ts';
+import { ExampleType } from '../models/example.model.ts';
 
-/**
- * Retrieves all items from the database.
- * @returns {Promise<Array>} A promise that resolves to an array of items.
- */
-async function getAll() {
-  return ExampleModel.find();
-}
-
-/**
- * Creates a new item in the database.
- * @param {*} data The data for the new item.
- * @returns {Promise<Object>} A promise that resolves to the created item.
- */
-async function create(data: ExampleType) {
-  return ExampleModel.create(data);
-}
-
-export default {
-  getAll,
-  create,
+type ExampleRepoType = GenericRepository<ExampleType> & {
+  findAndPopulate: (filter: Partial<ExampleType>) => Promise<ExampleType[]>;
 };
+
+const repository: Partial<ExampleRepoType> = {
+  bootstrap
+};
+
+function bootstrap<T extends GenericRepository<ExampleType>>(
+  repoFactory: (model: unknown) => T,
+  model: unknown
+): void {
+  const baseRepo = repoFactory(model);
+  Object.assign(repository, baseRepo);
+
+  // Specific methods
+  const fields: PopulateOptions[] = [
+    { path: 'user', select: 'fullName' }
+  ];
+  repository.findAndPopulate = async (filter) => {
+    const results = await baseRepo.find(filter);
+    return baseRepo.populate(results, fields);
+  };
+}
+
+export default repository as ExampleRepoType;
