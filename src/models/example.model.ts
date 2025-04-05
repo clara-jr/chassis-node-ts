@@ -4,6 +4,10 @@ const ObjectId = Schema.Types.ObjectId;
 const ExampleSchema = new Schema({
   index: { type: ObjectId, unique: true, required: true, index: true },
   sparseIndex: { type: String, sparse: true },
+  user: {
+    type: ObjectId,
+    ref: 'User',
+  },
   string: String,
   number: Number,
   boolean: Boolean,

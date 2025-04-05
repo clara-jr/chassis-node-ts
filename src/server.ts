@@ -15,6 +15,9 @@ import cacheHandler from './middlewares/cache-handler.ts';
 import IMDBService from './services/imdb.service.ts';
 import JWTService from './services/jwt.service.ts';
 import redisService from './services/redis.service.ts';
+import mongoRepository from './repositories/mongo.repository.ts';
+import exampleRepository from './repositories/example.repository.ts';
+import { ExampleModel } from './models/example.model.ts';
 
 const app = express();
 
@@ -46,6 +49,9 @@ async function start() {
   app.use(cacheHandler);
   app.use('/', routes);
   app.use(customErrorHandler);
+
+  // Bootstrap repositories
+  exampleRepository.bootstrap(mongoRepository, ExampleModel);
 
   // Start Express server
   await new Promise((resolve) => {
