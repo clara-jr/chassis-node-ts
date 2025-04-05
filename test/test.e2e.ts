@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb';
 
 import server from '../src/server.ts';
 
-import { Model } from '../src/models/model.ts';
+import { ExampleModel } from '../src/models/example.model.ts';
 import JWTService from '../src/services/jwt.service.ts';
 
 describe('Test', () => {
@@ -19,7 +19,7 @@ describe('Test', () => {
   });
 
   afterEach(async () => {
-    await Model.deleteMany({});
+    await ExampleModel.deleteMany({});
   });
 
   describe('GET /', () => {
@@ -34,7 +34,7 @@ describe('Test', () => {
     describe('when token is valid', () => {
       const model = { index: new ObjectId('123456789123456789123456') };
       beforeEach(async () => {
-        await Model.create(model);
+        await ExampleModel.create(model);
       });
       it('should respond with 200 OK', async () => {
         const res = await supertest(server.app)
@@ -70,7 +70,7 @@ describe('Test', () => {
         expect(res.status).to.equal(201);
         expect(res.body.index.toString()).to.equal(model.index.toString());
 
-        const object = await Model.findOne({ index: model.index });
+        const object = await ExampleModel.findOne({ index: model.index });
         expect(object?.index.toString()).to.equal(model.index.toString());
       });
     });
