@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import Controller from '../controllers/controller.ts';
+import Controller from '../controllers/example.controller.ts';
 import asyncErrorHandler from '../middlewares/async-error-handler.ts';
 
 /**
