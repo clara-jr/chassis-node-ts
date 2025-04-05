@@ -1,11 +1,11 @@
-import { Model, ModelType } from '../models/model.ts';
+import { ExampleModel, ExampleType } from '../models/example.model.ts';
 
 /**
  * Retrieves all items from the database.
  * @returns {Promise<Array>} A promise that resolves to an array of items.
  */
 async function getAll() {
-  return Model.find();
+  return ExampleModel.find();
 }
 
 /**
@@ -13,8 +13,8 @@ async function getAll() {
  * @param {*} data The data for the new item.
  * @returns {Promise<Object>} A promise that resolves to the created item.
  */
-async function create(data: ModelType) {
-  return Model.create(data);
+async function create(data: ExampleType) {
+  return ExampleModel.create(data);
 }
 
 export default {

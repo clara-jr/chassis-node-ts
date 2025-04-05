@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import Service from '../services/service.ts';
-import schema from '../dtos/dto.ts';
+import Service from '../services/example.service.ts';
+import schema from '../dtos/example.dto.ts';
 
 async function getAll(_req: Request, res: Response) {
   const data = await Service.getAll();

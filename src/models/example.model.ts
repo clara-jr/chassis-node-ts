@@ -1,7 +1,7 @@
-import { Schema, InferSchemaType, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 const ObjectId = Schema.Types.ObjectId;
 
-const ModelSchema = new Schema({
+const ExampleSchema = new Schema({
   index: { type: ObjectId, unique: true, required: true, index: true },
   sparseIndex: { type: String, sparse: true },
   string: String,
@@ -33,13 +33,30 @@ const ModelSchema = new Schema({
     },
     default: ['en'],
   },
+}, {
+  timestamps: true
 });
 
-type _ModelType = InferSchemaType<typeof ModelSchema>;
-interface ModelType extends _ModelType {
+interface ExampleType {
   _id: Schema.Types.ObjectId
+  index: Schema.Types.ObjectId
+  sparseIndex?: string
+  user?: Schema.Types.ObjectId
+  string?: string
+  number?: number
+  boolean?: boolean
+  date?: Date
+  stringsArray?: string[]
+  objectsArray?: { string?: string, date?: Date }[]
+  embedded?: { string?: string, number?: number }
+  object?: Record<string, unknown>
+  default?: string
+  lang?: string
+  languages?: string[]
+  createdAt?: Date
+  updatedAt?: Date
 }
 
-const Model = model<_ModelType>('Model', ModelSchema, 'models');
+const ExampleModel = model('Example', ExampleSchema, 'examples');
 
-export { Model, ModelType };
+export { ExampleModel, ExampleType };
