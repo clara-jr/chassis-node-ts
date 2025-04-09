@@ -1,30 +1,29 @@
 import { PopulateOptions } from 'mongoose';
-import { GenericRepository } from '../types/repository.types.ts';
+import { GenericRepository, Populated } from '../types/repository.types.ts';
 import { ExampleType } from '../models/example.model.ts';
 
 type ExampleRepoType = GenericRepository<ExampleType> & {
-  findAndPopulate: (filter: Partial<ExampleType>) => Promise<ExampleType[]>;
+  findAndPopulate: (filter: Partial<ExampleType>) => Promise<Populated<ExampleType, PopulatedProperties>[]>;
 };
 
-const repository: Partial<ExampleRepoType> = {
-  bootstrap
-};
-
-function bootstrap<T extends GenericRepository<ExampleType>>(
-  repoFactory: (model: unknown) => T,
-  model: unknown
-): void {
-  const baseRepo = repoFactory(model);
-  Object.assign(repository, baseRepo);
-
-  // Specific methods
-  const fields: PopulateOptions[] = [
-    { path: 'user', select: 'fullName' }
-  ];
-  repository.findAndPopulate = async (filter) => {
-    const results = await baseRepo.find(filter);
-    return baseRepo.populate(results, fields);
-  };
+type PopulatedProperties = {
+  user: {
+    fullName: string
+  }
 }
 
-export default repository as ExampleRepoType;
+const repository: ExampleRepoType = {
+  bootstrap: (repoImpl: (Model: unknown) => GenericRepository<ExampleType>, Model: unknown): void => {
+    Object.assign(repository, repoImpl(Model));
+  },
+  // Specific methods
+  findAndPopulate: async (filter: Partial<ExampleType>): Promise<Populated<ExampleType, PopulatedProperties>[]> => {
+    const fields: PopulateOptions[] = [
+      { path: 'user', select: 'fullName' }
+    ];
+    const results = await repository.find(filter);
+    return repository.populate<PopulatedProperties>(results, fields);
+  }
+} as ExampleRepoType;
+
+export default repository;

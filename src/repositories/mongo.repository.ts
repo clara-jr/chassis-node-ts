@@ -9,7 +9,7 @@ type Repository<T> = {
   findOneAndUpdate: (filter: FilterQuery<T>, update: UpdateQuery<T>, options?: QueryOptions) => Promise<T | null>;
   findByIdAndUpdate: (id: string, update: UpdateQuery<T>, options?: QueryOptions) => Promise<T | null>;
   deleteOne: (filter: FilterQuery<T>) => Promise<{ deletedCount?: number }>;
-  deleteMany: (filter: FilterQuery<T>) => Promise<{ deletedCount?: number }>;
+  deleteMany: (filter?: FilterQuery<T>) => Promise<{ deletedCount?: number }>;
   populate: (docs: T[], fields: PopulateOptions[]) => Promise<T[]>;
 };
 
